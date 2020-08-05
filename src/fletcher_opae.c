@@ -95,17 +95,20 @@ fstatus_t platformTerminate(void *arg)
         }
     }
 
-    fprintf(stderr, "Buffer address not found in platform buffer map\n");
-    return FLETCHER_STATUS_ERROR;
+    if (state.handle != NULL)
+    {
+        result = fpgaUnmapMMIO(state.handle, 0);
+        OPAE_CHECK_RESULT(result, "unmapping MMIO space");
 
-    result = fpgaUnmapMMIO(state.handle, 1);
-    OPAE_CHECK_RESULT(result, "unmapping MMIO space");
+        result = fpgaClose(state.handle);
+        OPAE_CHECK_RESULT(result, "closing AFU");
+    }
 
-    result = fpgaClose(state.handle);
-    OPAE_CHECK_RESULT(result, "closing AFU");
-
-    result = fpgaDestroyToken(state.token);
-    OPAE_CHECK_RESULT(result, "destroying token");
+    if (state.token != NULL)
+    {
+        result = fpgaDestroyToken(&state.token);
+        OPAE_CHECK_RESULT(result, "destroying token");
+    }
 
     return FLETCHER_STATUS_OK;
 }
@@ -114,7 +117,7 @@ fstatus_t platformWriteMMIO(uint64_t offset, uint32_t value)
 {
     fpga_result result = FPGA_OK;
 
-    result = fpgaWriteMMIO32(state.handle, 0, offset, value);
+    result = fpgaWriteMMIO32(state.handle, 0, offset * sizeof(uint32_t), value);
     OPAE_CHECK_RESULT(result, "writing to MMIO space");
 
     return FLETCHER_STATUS_OK;
@@ -124,7 +127,7 @@ fstatus_t platformReadMMIO(uint64_t offset, uint32_t *value)
 {
     fpga_result result = FPGA_OK;
 
-    result = fpgaReadMMIO32(state.handle, 0, offset, value);
+    result = fpgaReadMMIO32(state.handle, 0, offset * sizeof(uint32_t), value);
     OPAE_CHECK_RESULT(result, "reading from MMIO space");
 
     return FLETCHER_STATUS_OK;
