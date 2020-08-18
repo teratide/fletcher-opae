@@ -52,10 +52,7 @@ RUN mkdir -p /intel-fpga-bbb/build && \
 ENV FPGA_BBB_CCI_SRC /intel-fpga-bbb
 
 # Intel TBB
-RUN mkdir -p /intel-tbb && \
-    curl -L https://github.com/oneapi-src/oneTBB/releases/download/v2020.3/tbb-2020.3-lin.tgz | tar xz -C /intel-tbb --strip-components=1
-
-ENV TBB_HOME /intel-tbb/tbb
+RUN curl -L https://github.com/oneapi-src/oneTBB/releases/download/v2020.3/tbb-2020.3-lin.tgz | tar xz -C /usr --strip-components=1
 
 # Fletcher runtime
 RUN mkdir -p /fletcher && \
