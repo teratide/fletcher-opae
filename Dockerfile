@@ -60,7 +60,7 @@ RUN mkdir -p /fletcher && \
     yum install -y arrow-devel && \
     curl -L https://github.com/abs-tudelft/fletcher/archive/0.0.11.tar.gz | tar xz -C /fletcher --strip-components=1 && \
     cd /fletcher && \
-    cmake3 -DCMAKE_BUILD_TYPE=Release . && \
+    cmake3 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr . && \
     make -j && \
     make install && \
     rm -rf /fletcher
@@ -69,7 +69,7 @@ RUN mkdir -p /fletcher && \
 RUN mkdir -p /fletcher-opae && \
     curl -L https://github.com/abs-tudelft/fletcher-opae/archive/master.tar.gz | tar xz -C /fletcher-opae --strip-components=1 && \
     cd /fletcher-opae && \
-    cmake3 -DCMAKE_BUILD_TYPE=Release . && \
+    cmake3 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr . && \
     make -j && \
     make install && \
     rm -rf /fletcher-opae
