@@ -48,4 +48,17 @@ add_compile_unit(
     opae-c
 )
 
+add_compile_unit(
+  NAME fletcher::opae-ase
+  TYPE SHARED
+  PRPS
+    C_STANDARD 99
+    COMPILE_DEFINITIONS ASE
+  SRCS
+    src/fletcher_opae.c
+  DEPS
+    fletcher::c
+    opae-c-ase
+)
+
 compile_units()

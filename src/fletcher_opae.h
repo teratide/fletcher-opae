@@ -2,12 +2,17 @@
 #include <opae/fpga.h>
 #include "fletcher/fletcher.h"
 
+#ifdef ASE
+#define FLETCHER_PLATFORM_NAME "opae-ase"
+#else
 #define FLETCHER_PLATFORM_NAME "opae"
+#endif
+
 #define FLETCHER_PLATFORM_BUFFER_MAP_CAPACITY 4096
 
-#define OPAE_CHECK_RESULT(result, label)                              \
-	if (result != FPGA_OK)                                            \
-	{                                                                 \
+#define OPAE_CHECK_RESULT(result, label)                          \
+	if (result != FPGA_OK)                                          \
+	{                                                               \
 		fprintf(stderr, "Error %s: %s\n", label, fpgaErrStr(result)); \
 		return FLETCHER_STATUS_ERROR;                                 \
 	}
