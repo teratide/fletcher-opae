@@ -1,0 +1,40 @@
+metadata:
+  name: mmio
+
+entity:
+  bus-flatten:  yes
+  bus-prefix:   s_axi_
+  clock-name:   kcd_clk
+  reset-name:   kcd_reset
+  reset-active: low
+
+features:
+  bus-width:    64
+  optimize:     yes
+
+interface:
+  flatten:      yes
+
+fields:
+  - address: 0b0---
+    name: AFU_DHF
+    behavior: constant
+    value: 17293826967149215744 # [63:60]: 1 && [40]: 1
+
+  - address: 0b1---
+    name: AFU_ID_L
+    behavior: config
+
+  - address: 0b10---
+    name: AFU_ID_H
+    behavior: config
+  
+  - address: 0b11---
+    name: DFH_RSVD0
+    behavior: constant
+    value: 0
+
+  - address: 0b100---
+    name: DFH_RSVD1
+    behavior: constant
+    value: 0

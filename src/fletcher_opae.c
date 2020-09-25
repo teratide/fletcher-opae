@@ -127,6 +127,8 @@ fstatus_t platformReadMMIO(uint64_t offset, uint32_t *value)
 {
     fpga_result result = FPGA_OK;
 
+    // todo ADD OPAE OFFSET
+
     result = fpgaReadMMIO32(state.handle, 0, offset * sizeof(uint32_t), value);
     OPAE_CHECK_RESULT(result, "reading from MMIO space");
 
