@@ -25,7 +25,7 @@ endif()
 
 FetchContent_Declare(opae-c
   GIT_REPOSITORY  https://github.com/opae/opae-libs.git
-  GIT_TAG         master
+  GIT_TAG         release/2.0.0
 )
 if(NOT opae-c_POPULATED)
   FetchContent_Populate(opae-c)
