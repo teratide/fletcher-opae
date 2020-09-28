@@ -8,6 +8,8 @@
 #define FLETCHER_PLATFORM_NAME "opae"
 #endif
 
+#define OPAE_MMIO_OFFSET 64
+
 #define FLETCHER_PLATFORM_BUFFER_MAP_CAPACITY 4096
 
 #define OPAE_CHECK_RESULT(result, label)                          \

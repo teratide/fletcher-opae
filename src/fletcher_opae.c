@@ -117,7 +117,7 @@ fstatus_t platformWriteMMIO(uint64_t offset, uint32_t value)
 {
     fpga_result result = FPGA_OK;
 
-    result = fpgaWriteMMIO32(state.handle, 0, offset * sizeof(uint32_t), value);
+    result = fpgaWriteMMIO32(state.handle, 0, OPAE_MMIO_OFFSET + offset * sizeof(uint32_t), value);
     OPAE_CHECK_RESULT(result, "writing to MMIO space");
 
     return FLETCHER_STATUS_OK;
@@ -127,7 +127,7 @@ fstatus_t platformReadMMIO(uint64_t offset, uint32_t *value)
 {
     fpga_result result = FPGA_OK;
 
-    result = fpgaReadMMIO32(state.handle, 0, offset * sizeof(uint32_t), value);
+    result = fpgaReadMMIO32(state.handle, 0, OPAE_MMIO_OFFSET + offset * sizeof(uint32_t), value);
     OPAE_CHECK_RESULT(result, "reading from MMIO space");
 
     return FLETCHER_STATUS_OK;
