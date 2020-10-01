@@ -48,3 +48,10 @@ export ASE_WORKDIR=/sim/work
 ```
 
 The host application should output `-6`.
+
+You can inspect the waveform.
+
+```
+cd /sim
+make wave
+```
