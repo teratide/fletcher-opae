@@ -145,27 +145,8 @@ fstatus_t platformCopyDeviceToHost(const da_t device_source, uint8_t *host_desti
 
 fstatus_t platformDeviceMalloc(da_t *device_address, int64_t size)
 {
-    if (platform_buffer_map_size == FLETCHER_PLATFORM_BUFFER_MAP_CAPACITY - 1)
-    {
-        fprintf(stderr, "Error: platform buffer map capacity reached. Increase `FLETCHER_PLATFORM_BUFFER_MAP_CAPACITY`.");
-        return FLETCHER_STATUS_ERROR;
-    }
-
-    fpga_result result = FPGA_OK;
-
-    uint64_t wsid;
-    uint64_t *buffer_address;
-    result = fpgaPrepareBuffer(state.handle, size, (void **)&buffer_address, &wsid, 0);
-    OPAE_CHECK_RESULT(result, "preparing shared memory buffer");
-
-    result = fpgaGetIOAddress(state.handle, wsid, device_address);
-    OPAE_CHECK_RESULT(result, "getting IO address");
-
-    platform_buffer buf = {wsid, *buffer_address, *device_address, ACTIVE};
-    platform_buffer_map[platform_buffer_map_size] = buf;
-    platform_buffer_map_size += 1;
-
-    return FLETCHER_STATUS_OK;
+    fprintf(stderr, "Device malloc not supported\n");
+    return FLETCHER_STATUS_ERROR;
 }
 
 fstatus_t platformDeviceFree(da_t device_address)
@@ -197,17 +178,37 @@ fstatus_t platformDeviceFree(da_t device_address)
 
 fstatus_t platformPrepareHostBuffer(const uint8_t *host_source, da_t *device_destination, int64_t size, int *alloced)
 {
-    *device_destination = (da_t)host_source;
-    *alloced = 0;
-    device_buffer_ptr += size;
+    if (platform_buffer_map_size == FLETCHER_PLATFORM_BUFFER_MAP_CAPACITY - 1)
+    {
+        fprintf(stderr, "Error: platform buffer map capacity reached. Increase `FLETCHER_PLATFORM_BUFFER_MAP_CAPACITY`.");
+        return FLETCHER_STATUS_ERROR;
+    }
+
+    fpga_result result = FPGA_OK;
+
+    uint64_t wsid;
+    uint64_t *buffer_address;
+    // todo(mb): use FPGA_BUF_PREALLOCATED
+    result = fpgaPrepareBuffer(state.handle, size, (void **)&buffer_address, &wsid, 0);
+    OPAE_CHECK_RESULT(result, "preparing shared memory buffer");
+
+    // copy contents to shared buffer
+    memcpy(buffer_address, host_source, size);
+
+    result = fpgaGetIOAddress(state.handle, wsid, device_destination);
+    OPAE_CHECK_RESULT(result, "getting IO address");
+
+    platform_buffer buf = {wsid, *buffer_address, *device_destination, ACTIVE};
+    platform_buffer_map[platform_buffer_map_size] = buf;
+    platform_buffer_map_size += 1;
+
+    *alloced = size;
 
     return FLETCHER_STATUS_OK;
 }
 
 fstatus_t platformCacheHostBuffer(const uint8_t *host_source, da_t *device_destination, int64_t size)
 {
-    *device_destination = device_buffer_ptr;
-    device_buffer_ptr += size;
-
-    return FLETCHER_STATUS_OK;
+    fprintf(stderr, "Cache host buffer not supported\n");
+    return FLETCHER_STATUS_ERROR;
 }
