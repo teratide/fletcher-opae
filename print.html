@@ -335,6 +335,47 @@ make
 </code></pre>
 <p>The host application should output <code>-6</code>.</p>
 <h1><a class="header" href="#hardware-1" id="hardware-1">Hardware</a></h1>
+<p>This subsection shows how to synthesize the hardware design, flash the bitstream to the FPGA, and run your application using the accelerator.</p>
+<h2><a class="header" href="#synthesis" id="synthesis">Synthesis</a></h2>
+<p>Start by running a new container.</p>
+<pre><code>cd fletcher-opae/examples/sum
+docker run -it --rm --name ias --net=host -v `pwd`:/src:ro ias:1.2.1
+</code></pre>
+<p>Create the synthesis environment and generate the bistream.</p>
+<pre><code>afu_synth_setup -s /src/hw/sources.txt /synth
+cd /synth
+${OPAE_PLATFORM_ROOT}/bin/run.sh
+</code></pre>
+<p>In order to flash the resulting bitstream we must run it through PACsign. In this case the bistream is not signed, but this step is still required.</p>
+<pre><code>PACSign PR -y -t UPDATE -H openssl_manager -i sum.gbs -o sum_unsigned.gbs
+</code></pre>
+<p>Start a new shell and copy the resulting unsigned bitstream to your local machine.</p>
+<pre><code>cd fletcher-opae/examples/sum
+docker cp ias:/synth/sum_unsigned.gbs .
+</code></pre>
+<h2><a class="header" href="#flash-the-bistream" id="flash-the-bistream">Flash the bistream</a></h2>
+<p>To flash the bistream start new <a href="https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities">privileged</a> container to access the FPGA.</p>
+<pre><code>cd fletcher-opae/examples/sum
+docker run -it --rm --privileged -v `pwd`:/src:ro ias:1.2.1
+</code></pre>
+<p>Flash the bitstream using <code>fpgaconf</code>.</p>
+<pre><code>fpgaconf sum_unsigned.gbs
+</code></pre>
+<h2><a class="header" href="#run-the-host-application" id="run-the-host-application">Run the host application</a></h2>
+<p>Start a new privileged container.</p>
+<pre><code>cd fletcher-opae/examples/sum
+docker run -it --rm --privileged -v `pwd`:/src:ro ias:1.2.1
+</code></pre>
+<p>Build the host application. It's important to use a release build to disable simulation mode.</p>
+<pre><code>mkdir -p /build
+cd /build
+cmake3 -DCMAKE_BUILD_TYPE=release /src/sw
+make
+</code></pre>
+<p>Run the host application, using the accelerator.</p>
+<pre><code>./sum /src/hw/example.rb
+</code></pre>
+<p>The result should be -6.</p>
 
                     </main>
 
