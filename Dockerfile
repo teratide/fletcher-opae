@@ -89,4 +89,7 @@ RUN mkdir -p /fletcher-opae && \
     make install && \
     rm -rf /fletcher-opae
 
+# Apply opae-sim patch
+RUN sed -i 's/CC_OPT+= -O2/CC_OPT+= -std=c99 -O2/g' /usr/share/opae/ase/Makefile
+
 WORKDIR /src
