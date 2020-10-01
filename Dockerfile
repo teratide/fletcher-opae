@@ -92,4 +92,8 @@ RUN mkdir -p /fletcher-opae && \
 # Apply opae-sim patch
 RUN sed -i 's/CC_OPT+= -O2/CC_OPT+= -std=c99 -O2/g' /usr/share/opae/ase/Makefile
 
+# Install vhdmmio
+RUN python3 -m pip install -U pip && \
+    python3 -m pip install vhdmmio pyfletchgen
+
 WORKDIR /src
