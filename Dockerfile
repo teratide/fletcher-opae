@@ -42,7 +42,7 @@ RUN mkdir -p /opae-sdk/build && \
     curl -L https://github.com/OPAE/opae-sdk/archive/${OPAE_REF}.tar.gz | tar xz -C /opae-sdk --strip-components=1 && \
     cd /opae-sdk/build && \
     cmake3 -DCMAKE_BUILD_TYPE=Release \
-    -DBUILD_ASE=On -DOPAE_BUILD_SIM=On -DOPAE_SIM_TAG=${OPAE_REF} \
+    -DBUILD_ASE=On -DOPAE_BUILD_SIM=On -DOPAE_SIM_TAG=c5b24f7b31a656d9e85541ca9ba9e1841ac4ede1 \
     -DCMAKE_INSTALL_PREFIX=/usr .. && \
     make -j && \
     make install && \
@@ -88,9 +88,6 @@ RUN mkdir -p /fletcher-opae && \
     make -j && \
     make install && \
     rm -rf /fletcher-opae
-
-# Apply opae-sim patch
-RUN sed -i 's/CC_OPT+= -O2/CC_OPT+= -std=c99 -O2/g' /usr/share/opae/ase/Makefile
 
 # Install vhdmmio
 RUN python3 -m pip install -U pip && \
