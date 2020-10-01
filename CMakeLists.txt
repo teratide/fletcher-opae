@@ -16,7 +16,7 @@ FetchContent_MakeAvailable(cmake-modules)
 
 FetchContent_Declare(fletcher
   GIT_REPOSITORY  https://github.com/abs-tudelft/fletcher.git
-  GIT_TAG         0.0.11
+  GIT_TAG         0.0.12
 )
 if(NOT fletcher_POPULATED)
   FetchContent_Populate(fletcher)

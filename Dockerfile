@@ -64,7 +64,7 @@ ENV FPGA_BBB_CCI_SRC /intel-fpga-bbb
 RUN curl -L https://github.com/oneapi-src/oneTBB/releases/download/v2020.3/tbb-2020.3-lin.tgz | tar xz -C /usr --strip-components=1
 
 # Fletcher runtime
-ARG FLETCHER_REF=0.0.11
+ARG FLETCHER_REF=0.0.12
 RUN mkdir -p /fletcher && \
     yum install -y https://apache.bintray.com/arrow/centos/$(cut -d: -f5 /etc/system-release-cpe)/apache-arrow-release-latest.rpm && \
     yum install -y arrow-devel && \
