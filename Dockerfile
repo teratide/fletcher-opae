@@ -49,7 +49,7 @@ RUN mkdir -p /opae-sdk/build && \
     rm -rf /opae-sdk/build
 
 # Intel FPGA Basic Building Blocks
-ARG BBB_REF=faf2d2ce86d6e6be7e705e951dd3104030b6cc1e
+ARG BBB_REF=579ce26b433c3b81de4fa1a5e3e9985f48bc5dde
 RUN mkdir -p /intel-fpga-bbb/build && \
     curl -L https://github.com/OPAE/intel-fpga-bbb/archive/${BBB_REF}.tar.gz | tar xz -C /intel-fpga-bbb --strip-components=1 && \
     cd /intel-fpga-bbb/build && \
