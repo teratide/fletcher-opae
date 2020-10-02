@@ -91,6 +91,6 @@ RUN mkdir -p /fletcher-opae && \
 
 # Install vhdmmio
 RUN python3 -m pip install -U pip && \
-    python3 -m pip install vhdmmio pyfletchgen
+    python3 -m pip install vhdmmio pyfletchgen pyarrow
 
 WORKDIR /src
