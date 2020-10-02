@@ -188,17 +188,27 @@ fstatus_t platformPrepareHostBuffer(const uint8_t *host_source, da_t *device_des
 
     uint64_t wsid;
     uint64_t *buffer_address;
-    // todo(mb): use FPGA_BUF_PREALLOCATED
-    result = fpgaPrepareBuffer(state.handle, size, (void **)&buffer_address, &wsid, 0);
-    OPAE_CHECK_RESULT(result, "preparing shared memory buffer");
 
-    // copy contents to shared buffer
-    memcpy(buffer_address, host_source, size);
+    // Attempt to re-use the provided buffer. (Requires page-aligned buffer)
+    result = fpgaPrepareBuffer(state.handle, size, (void **)&host_source, &wsid, FPGA_BUF_PREALLOCATED);
+
+    if (result == FPGA_OK)
+    {
+        buffer_address = (uint64_t *)host_source;
+    }
+    else
+    {
+        // Allocate a new buffer
+        result = fpgaPrepareBuffer(state.handle, size, (void **)&buffer_address, &wsid, 0);
+        // Copy contents to new buffer
+        memcpy(buffer_address, host_source, size);
+        OPAE_CHECK_RESULT(result, "preparing shared memory buffer");
+    }
 
     result = fpgaGetIOAddress(state.handle, wsid, device_destination);
     OPAE_CHECK_RESULT(result, "getting IO address");
 
-    platform_buffer buf = {wsid, *buffer_address, *device_destination, ACTIVE};
+    platform_buffer buf = {wsid, *host_source, *device_destination, ACTIVE};
     platform_buffer_map[platform_buffer_map_size] = buf;
     platform_buffer_map_size += 1;
 
