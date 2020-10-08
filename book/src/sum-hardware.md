@@ -11,7 +11,7 @@ cd fletcher-opae/examples/sum
 docker run -it --rm --name ias --net=host -v `pwd`:/src:ro ias:1.2.1
 ```
 
-Create the synthesis environment and generate the bistream.
+Create the synthesis environment and generate the bitstream.
 
 ```
 afu_synth_setup -s /src/hw/sources.txt /synth
@@ -19,7 +19,7 @@ cd /synth
 ${OPAE_PLATFORM_ROOT}/bin/run.sh
 ```
 
-In order to flash the resulting bitstream we must run it through PACsign. In this case the bistream is not signed, but this step is still required.
+In order to flash the resulting bitstream we must run it through PACsign. In this case the bitstream is not signed, but this step is still required.
 
 ```
 PACSign PR -y -t UPDATE -H openssl_manager -i sum.gbs -o sum_unsigned.gbs
@@ -49,11 +49,11 @@ fpgaconf sum_unsigned.gbs
 
 ## Run the host application
 
-Start a new privileged container.
+Start a new container with [access to the device](https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities).
 
 ```
 cd fletcher-opae/examples/sum
-docker run -it --rm --privileged -v `pwd`:/src:ro ias:1.2.1
+docker run -it --rm --device /dev/intel-fpga-port.0 -v `pwd`:/src:ro ias:1.2.1
 ```
 
 Build the host application. It's important to use a release build to disable simulation mode.

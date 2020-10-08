@@ -9,6 +9,7 @@ The development environment is based on a [Docker](https://www.docker.com/) imag
 - Generate Fletcher projects
   - fletchgen
   - vhdmmio
+  - pyarrow
 - Build Fletcher projects
   - C++11 compiler
   - Apache Arrow 1.0+
