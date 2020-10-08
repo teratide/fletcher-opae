@@ -177,7 +177,7 @@
 <li><code>Sum.vhd</code>: this is the sum kernel, taken (without modification) from the Fletcher project.</li>
 </ul>
 </li>
-<li><code>example.rb</code>: an example recordbatch file with some number that the accelerator will add.</li>
+<li><code>generate-input.py</code>: an example python script to generate an Arrow recordbatch file with some number that the accelerator will add.</li>
 <li><code>sources.txt</code>: a list of sources that are used by the tools to discover the required files.</li>
 <li><code>sum.json</code>: contains information about the accelerator that is used by the tools. The <code>accelerator-type-uuid</code> is used by the host application for discovery.</li>
 <li><code>sum.mmio.yml</code>: a custom <a href="https://github.com/abs-tudelft/vhdmmio"><code>vhdmmio</code></a> input file. Needed because currently Fletchgen does not support generating compatible MMIO files for this platform.</li>
@@ -194,6 +194,10 @@ fletchgen -n Sum -r example.rb -l vhdl --mmio64 --mmio-offset 64 --axi
 <p>Because Fletchgen currently does not support generating MMIO files for this platform run <code>vhdmmio</code> on the provided MMIO yaml file.</p>
 <pre><code>vhdmmio -V vhdl -P vhdl sum.mmio.yml
 </code></pre>
+<p>Also generate an input recordbatch file using the provided <code>generate-input.py</code> Python script.</p>
+<pre><code>python3 generate-input.py
+</code></pre>
+<p>This script generates the <code>example.rb</code> file.</p>
 <p>You can now <code>exit</code> the container and inspect the generated files.</p>
 
                     </main>
