@@ -7,7 +7,7 @@ RUN yum install -y curl epel-release sudo && \
     sed -i 's/install_opae=1/install_opae=0/g' /installer/setup.sh && \
     /installer/setup.sh --installdir /opt --yes && \
     rm -rf /installer && \
-    yum install -y libpng12 freetype fontconfig libX11 libSM libXrender libXext
+    yum install -y libpng12 freetype fontconfig libX11 libSM libXrender libXext libXtst
 
 ENV OPAE_PLATFORM_ROOT /opt/inteldevstack/a10_gx_pac_ias_1_2_1_pv/
 ENV QUARTUS_HOME /opt/intelFPGA_pro/quartus_19.2.0b57/quartus/
