@@ -30,6 +30,14 @@ cd fletcher-opae/examples/sum/
 docker run -it --rm -v `pwd`:/src ias:1.2.1
 ```
 
+Generate an input recordbatch file using the provided `generate-input.py` Python script.
+
+```
+python3 generate-input.py
+```
+
+This script generates the `example.rb` file.
+
 Then run Fletchgen on the mounted source folder.
 
 ```
@@ -42,13 +50,5 @@ Because Fletchgen currently does not support generating MMIO files for this plat
 ```
 vhdmmio -V vhdl -P vhdl sum.mmio.yml
 ```
-
-Also generate an input recordbatch file using the provided `generate-input.py` Python script.
-
-```
-python3 generate-input.py
-```
-
-This script generates the `example.rb` file.
 
 You can now `exit` the container and inspect the generated files.
