@@ -298,6 +298,10 @@ cd fletcher-opae/
 <pre><code>cd fletcher-opae/examples/sum/
 docker run -it --rm -v `pwd`:/src ias:1.2.1
 </code></pre>
+<p>Generate an input recordbatch file using the provided <code>generate-input.py</code> Python script.</p>
+<pre><code>python3 generate-input.py
+</code></pre>
+<p>This script generates the <code>example.rb</code> file.</p>
 <p>Then run Fletchgen on the mounted source folder.</p>
 <pre><code>cd /src/hw
 fletchgen -n Sum -r example.rb -l vhdl --mmio64 --mmio-offset 64 --axi
@@ -305,10 +309,6 @@ fletchgen -n Sum -r example.rb -l vhdl --mmio64 --mmio-offset 64 --axi
 <p>Because Fletchgen currently does not support generating MMIO files for this platform run <code>vhdmmio</code> on the provided MMIO yaml file.</p>
 <pre><code>vhdmmio -V vhdl -P vhdl sum.mmio.yml
 </code></pre>
-<p>Also generate an input recordbatch file using the provided <code>generate-input.py</code> Python script.</p>
-<pre><code>python3 generate-input.py
-</code></pre>
-<p>This script generates the <code>example.rb</code> file.</p>
 <p>You can now <code>exit</code> the container and inspect the generated files.</p>
 <h1><a class="header" href="#simulate" id="simulate">Simulate</a></h1>
 <p>This subsection shows how to run hardware/software co-simulation using <a href="https://github.com/OPAE/opae-sim">OPAE ASE</a>.</p>
