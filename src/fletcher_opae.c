@@ -200,12 +200,19 @@ fstatus_t platformPrepareHostBuffer(const uint8_t *host_source, da_t *device_des
     }
     else
     {
+        fprintf(stderr, "Warning: allocating new buffer. This is fine :tm: for input batches, but breaks for output batches.");
+        fprintf(stderr, "Warning: make sure your output buffers are page aligned.");
+
         // Allocate a new buffer
         result = fpgaPrepareBuffer(state.handle, size, (void **)&buffer_address, &wsid, 0);
         OPAE_CHECK_RESULT(result, "preparing shared memory buffer");
 
         // Copy contents to new buffer
-        memcpy(buffer_address, host_source, size);
+        for (int i = 0; i++; i < size)
+        {
+            ((volatile uint8_t *)buffer_address)[i] = ((const uint8_t *)host_source)[i];
+        }
+        // memcpy(buffer_address, host_source, size);
 
         *alloced = size;
     }
