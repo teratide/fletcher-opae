@@ -65,9 +65,10 @@ RUN curl -L https://github.com/oneapi-src/oneTBB/releases/download/v2020.3/tbb-2
 
 # Fletcher runtime
 ARG FLETCHER_REF=0.0.12
+ARG ARROW_VERSION=1.0.1
 RUN mkdir -p /fletcher && \
     yum install -y https://apache.bintray.com/arrow/centos/$(cut -d: -f5 /etc/system-release-cpe)/apache-arrow-release-latest.rpm && \
-    yum install -y arrow-devel && \
+    yum install -y arrow-devel-${ARROW_VERSION}-1.el7 && \
     curl -L https://github.com/abs-tudelft/fletcher/archive/${FLETCHER_REF}.tar.gz | tar xz -C /fletcher --strip-components=1 && \
     cd /fletcher && \
     cmake3 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr . && \
@@ -80,7 +81,7 @@ RUN git clone --recursive --single-branch -b ${FLETCHER_REF} https://github.com/
 ENV FLETCHER_HARDWARE_DIR=/fletcher/hardware
 
 # Fletcher plaform support for OPAE
-ARG FLETCHER_OPAE_REF=dcb7ac4e269defd030ab6ab0d586891779f5bc20
+ARG FLETCHER_OPAE_REF=13fa0a4871dc75cb52cfb126f1373b714720467c
 RUN mkdir -p /fletcher-opae && \
     curl -L https://github.com/abs-tudelft/fletcher-opae/archive/${FLETCHER_OPAE_REF}.tar.gz | tar xz -C /fletcher-opae --strip-components=1 && \
     cd /fletcher-opae && \
@@ -91,6 +92,6 @@ RUN mkdir -p /fletcher-opae && \
 
 # Install vhdmmio
 RUN python3 -m pip install -U pip && \
-    python3 -m pip install vhdmmio pyfletchgen pyarrow
+    python3 -m pip install vhdmmio pyfletchgen pyarrow==${ARROW_VERSION}
 
 WORKDIR /src
