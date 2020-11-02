@@ -187,7 +187,7 @@ fstatus_t platformPrepareHostBuffer(const uint8_t *host_source, da_t *device_des
     fpga_result result = FPGA_OK;
 
     uint64_t wsid;
-    uint64_t *buffer_address;
+    volatile uint64_t *buffer_address;
 
     // Attempt to re-use the provided buffer. (Requires page-aligned buffer)
     result = fpgaPrepareBuffer(state.handle, size, (void **)&host_source, &wsid, FPGA_BUF_PREALLOCATED);
@@ -195,14 +195,19 @@ fstatus_t platformPrepareHostBuffer(const uint8_t *host_source, da_t *device_des
     if (result == FPGA_OK)
     {
         buffer_address = (uint64_t *)host_source;
+
+        *alloced = 0;
     }
     else
     {
         // Allocate a new buffer
         result = fpgaPrepareBuffer(state.handle, size, (void **)&buffer_address, &wsid, 0);
+        OPAE_CHECK_RESULT(result, "preparing shared memory buffer");
+
         // Copy contents to new buffer
         memcpy(buffer_address, host_source, size);
-        OPAE_CHECK_RESULT(result, "preparing shared memory buffer");
+
+        *alloced = size;
     }
 
     result = fpgaGetIOAddress(state.handle, wsid, device_destination);
@@ -211,8 +216,6 @@ fstatus_t platformPrepareHostBuffer(const uint8_t *host_source, da_t *device_des
     platform_buffer buf = {wsid, *host_source, *device_destination, ACTIVE};
     platform_buffer_map[platform_buffer_map_size] = buf;
     platform_buffer_map_size += 1;
-
-    *alloced = size;
 
     return FLETCHER_STATUS_OK;
 }
