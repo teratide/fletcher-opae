@@ -200,8 +200,8 @@ fstatus_t platformPrepareHostBuffer(const uint8_t *host_source, da_t *device_des
     }
     else
     {
-        fprintf(stderr, "Warning: allocating new buffer. This is fine :tm: for input batches, but breaks for output batches.");
-        fprintf(stderr, "Warning: make sure your output buffers are page aligned.");
+        fprintf(stderr, "Warning: allocating new buffer. This is fine :tm: for input batches, but breaks for output batches.\n");
+        fprintf(stderr, "Warning: make sure your output buffers are page aligned.\n");
 
         // Allocate a new buffer
         result = fpgaPrepareBuffer(state.handle, size, (void **)&buffer_address, &wsid, 0);
