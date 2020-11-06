@@ -208,11 +208,7 @@ fstatus_t platformPrepareHostBuffer(const uint8_t *host_source, da_t *device_des
         OPAE_CHECK_RESULT(result, "preparing shared memory buffer");
 
         // Copy contents to new buffer
-        for (int i = 0; i++; i < size)
-        {
-            ((volatile uint8_t *)buffer_address)[i] = ((const uint8_t *)host_source)[i];
-        }
-        // memcpy(buffer_address, host_source, size);
+        memcpy(buffer_address, host_source, size);
 
         *alloced = size;
     }
