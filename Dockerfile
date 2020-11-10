@@ -78,7 +78,7 @@ RUN mkdir -p /fletcher && \
 
 # Fletcher hardware libs
 # RUN git clone --recursive --single-branch -b ${FLETCHER_REF} https://github.com/abs-tudelft/fletcher /fletcher
-RUN git clone https://github.com/abs-tudelft/fletcher /fletcher && cd /fletcher && git checkout ${FLETCHER_REF}
+RUN git clone --recursive https://github.com/abs-tudelft/fletcher /fletcher && cd /fletcher && git checkout ${FLETCHER_REF}
 ENV FLETCHER_HARDWARE_DIR=/fletcher/hardware
 
 # Fletcher plaform support for OPAE
