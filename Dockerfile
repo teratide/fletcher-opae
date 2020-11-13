@@ -91,7 +91,8 @@ RUN mkdir -p /fletcher-opae && \
     rm -rf /fletcher-opae
 
 # Install vhdmmio
+ARG FLETCHER_VERSION=0.0.13
 RUN python3 -m pip install -U pip && \
-    python3 -m pip install vhdmmio pyfletchgen pyarrow==${ARROW_VERSION}
+    python3 -m pip install vhdmmio pyfletchgen==${FLETCHER_VERSION} pyarrow==${ARROW_VERSION}
 
 WORKDIR /src
