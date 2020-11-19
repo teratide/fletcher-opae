@@ -21,7 +21,7 @@ RUN mkdir -p /installer && \
     chmod +x ModelSimProSetup-19.2.0.57-linux.run && \
     ./ModelSimProSetup-19.2.0.57-linux.run --mode unattended --installdir /opt/intelFPGA_pro/quartus_19.2.0b57/ --accept_eula 1 && \
     rm -rf /installer && \
-    yum install -y glibc-devel.i686 libX11.i686 libXext.i686 libXft.i686 libgcc.i686 && \
+    yum install -y glibc-devel.i686 libX11.i686 libXext.i686 libXft.i686 && \
     sed -ci 's/linux_rh60/linux/g' /opt/intelFPGA_pro/quartus_19.2.0b57/modelsim_ase/bin/vsim
 
 ENV MTI_HOME /opt/intelFPGA_pro/quartus_19.2.0b57/modelsim_ase
