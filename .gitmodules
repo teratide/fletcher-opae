@@ -1,3 +1,0 @@
-[submodule "examples/battery_status/hw/vhdl/json"]
-	path = examples/battery_status/hw/vhdl/json
-	url = git@github.com:teratide/JSON-parser-components.git
