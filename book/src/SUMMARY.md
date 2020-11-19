@@ -8,3 +8,6 @@
   - [Prepare](./sum-prepare.md)
   - [Simulate](./sum-simulate.md)
   - [Hardware](./sum-hardware.md)
+- [Primmap example](./primmap-example.md)
+  - [Prepare](./primmap-prepare.md)
+  - [Use](./primmap-use.md)
