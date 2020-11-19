@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Introduction - Fletcher platform support for OPAE</title>
+        <title>Primmap example - Fletcher platform support for OPAE</title>
         
         
 
@@ -93,7 +93,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="setup.html"><strong aria-hidden="true">2.</strong> Setup</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="host-system-setup.html"><strong aria-hidden="true">2.1.</strong> Host system setup</a></li><li class="chapter-item expanded "><a href="dev-env-setup.html"><strong aria-hidden="true">2.2.</strong> Development environment setup</a></li></ol></li><li class="chapter-item expanded "><a href="sum-example.html"><strong aria-hidden="true">3.</strong> Sum example</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="sum-prepare.html"><strong aria-hidden="true">3.1.</strong> Prepare</a></li><li class="chapter-item expanded "><a href="sum-simulate.html"><strong aria-hidden="true">3.2.</strong> Simulate</a></li><li class="chapter-item expanded "><a href="sum-hardware.html"><strong aria-hidden="true">3.3.</strong> Hardware</a></li></ol></li><li class="chapter-item expanded "><a href="primmap-example.html"><strong aria-hidden="true">4.</strong> Primmap example</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="primmap-prepare.html"><strong aria-hidden="true">4.1.</strong> Prepare</a></li><li class="chapter-item expanded "><a href="primmap-use.html"><strong aria-hidden="true">4.2.</strong> Use</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="setup.html"><strong aria-hidden="true">2.</strong> Setup</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="host-system-setup.html"><strong aria-hidden="true">2.1.</strong> Host system setup</a></li><li class="chapter-item expanded "><a href="dev-env-setup.html"><strong aria-hidden="true">2.2.</strong> Development environment setup</a></li></ol></li><li class="chapter-item expanded "><a href="sum-example.html"><strong aria-hidden="true">3.</strong> Sum example</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="sum-prepare.html"><strong aria-hidden="true">3.1.</strong> Prepare</a></li><li class="chapter-item expanded "><a href="sum-simulate.html"><strong aria-hidden="true">3.2.</strong> Simulate</a></li><li class="chapter-item expanded "><a href="sum-hardware.html"><strong aria-hidden="true">3.3.</strong> Hardware</a></li></ol></li><li class="chapter-item expanded "><a href="primmap-example.html" class="active"><strong aria-hidden="true">4.</strong> Primmap example</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="primmap-prepare.html"><strong aria-hidden="true">4.1.</strong> Prepare</a></li><li class="chapter-item expanded "><a href="primmap-use.html"><strong aria-hidden="true">4.2.</strong> Use</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -159,26 +159,22 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#introduction" id="introduction">Introduction</a></h1>
-<p>This book includes information, guides and detail about <a href="https://github.com/abs-tudelft/fletcher">Fletcher</a> platform support for the <a href="https://opae.github.io/">Open Programmable Acceleration Engine (OPAE)</a>.</p>
-<blockquote>
-<p>Fletcher is a framework to integrate FPGA accelerators with <a href="https://arrow.apache.org/">Apache Arrow</a></p>
-</blockquote>
-<blockquote>
-<p>OPAE is a software framework for managing and accessing programmable accelerators (FPGAs)</p>
-</blockquote>
-<blockquote>
-<p>Apache Arrow is a cross-language development platform for in-memory analytics</p>
-</blockquote>
+                        <h1><a class="header" href="#primmap-example" id="primmap-example">Primmap example</a></h1>
+<p>This section explains how to use the <a href="https://github.com/teratide/fletcher-opae/tree/master/examples/primmap">primmap example</a>.</p>
+<p>This example read from an input recordbatch with numbers, adds one to all the values, and writes these values to an output recordbatch in host memory.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
+                            <a rel="prev" href="sum-hardware.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
 
                         
-                            <a rel="next" href="setup.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="primmap-prepare.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -190,9 +186,13 @@
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
+                    <a rel="prev" href="sum-hardware.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
 
                 
-                    <a rel="next" href="setup.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="primmap-prepare.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 

@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Introduction - Fletcher platform support for OPAE</title>
+        <title>Prepare - Fletcher platform support for OPAE</title>
         
         
 
@@ -93,7 +93,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="setup.html"><strong aria-hidden="true">2.</strong> Setup</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="host-system-setup.html"><strong aria-hidden="true">2.1.</strong> Host system setup</a></li><li class="chapter-item expanded "><a href="dev-env-setup.html"><strong aria-hidden="true">2.2.</strong> Development environment setup</a></li></ol></li><li class="chapter-item expanded "><a href="sum-example.html"><strong aria-hidden="true">3.</strong> Sum example</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="sum-prepare.html"><strong aria-hidden="true">3.1.</strong> Prepare</a></li><li class="chapter-item expanded "><a href="sum-simulate.html"><strong aria-hidden="true">3.2.</strong> Simulate</a></li><li class="chapter-item expanded "><a href="sum-hardware.html"><strong aria-hidden="true">3.3.</strong> Hardware</a></li></ol></li><li class="chapter-item expanded "><a href="primmap-example.html"><strong aria-hidden="true">4.</strong> Primmap example</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="primmap-prepare.html"><strong aria-hidden="true">4.1.</strong> Prepare</a></li><li class="chapter-item expanded "><a href="primmap-use.html"><strong aria-hidden="true">4.2.</strong> Use</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="setup.html"><strong aria-hidden="true">2.</strong> Setup</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="host-system-setup.html"><strong aria-hidden="true">2.1.</strong> Host system setup</a></li><li class="chapter-item expanded "><a href="dev-env-setup.html"><strong aria-hidden="true">2.2.</strong> Development environment setup</a></li></ol></li><li class="chapter-item expanded "><a href="sum-example.html"><strong aria-hidden="true">3.</strong> Sum example</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="sum-prepare.html"><strong aria-hidden="true">3.1.</strong> Prepare</a></li><li class="chapter-item expanded "><a href="sum-simulate.html"><strong aria-hidden="true">3.2.</strong> Simulate</a></li><li class="chapter-item expanded "><a href="sum-hardware.html"><strong aria-hidden="true">3.3.</strong> Hardware</a></li></ol></li><li class="chapter-item expanded "><a href="primmap-example.html"><strong aria-hidden="true">4.</strong> Primmap example</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="primmap-prepare.html" class="active"><strong aria-hidden="true">4.1.</strong> Prepare</a></li><li class="chapter-item expanded "><a href="primmap-use.html"><strong aria-hidden="true">4.2.</strong> Use</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -159,26 +159,60 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#introduction" id="introduction">Introduction</a></h1>
-<p>This book includes information, guides and detail about <a href="https://github.com/abs-tudelft/fletcher">Fletcher</a> platform support for the <a href="https://opae.github.io/">Open Programmable Acceleration Engine (OPAE)</a>.</p>
-<blockquote>
-<p>Fletcher is a framework to integrate FPGA accelerators with <a href="https://arrow.apache.org/">Apache Arrow</a></p>
-</blockquote>
-<blockquote>
-<p>OPAE is a software framework for managing and accessing programmable accelerators (FPGAs)</p>
-</blockquote>
-<blockquote>
-<p>Apache Arrow is a cross-language development platform for in-memory analytics</p>
-</blockquote>
+                        <h1><a class="header" href="#prepare" id="prepare">Prepare</a></h1>
+<h2><a class="header" href="#project-structure" id="project-structure">Project structure</a></h2>
+<p>Like most Fletcher projects, this example project contains software (host application) and hardware (accelerator functional unit) sources.</p>
+<h2><a class="header" href="#software" id="software">Software</a></h2>
+<p>The host application consists of a single C++ source file that contains the host application that interacts with the accelerator. A CMake file is included that can be used to build the application. Instructions are available in the simulate and hardware sections.</p>
+<h2><a class="header" href="#hardware" id="hardware">Hardware</a></h2>
+<p>The hardware directory contains a number of important files.</p>
+<ul>
+<li><code>sv</code>
+<ul>
+<li><code>ofs_plat_afu.sv</code>: this is the platform specific top-level that wraps the top-level generated by Fletcher</li>
+</ul>
+</li>
+<li><code>vhdl</code>
+<ul>
+<li><code>primmap.vhd</code>: this is the primmap kernel. It adds one to all elements of the input batch and writes the result to the output batch.</li>
+</ul>
+</li>
+<li><code>generate.py</code>: an example python script to generate an Arrow recordbatch file with some numbers that the accelerator will add and the output schema.</li>
+<li><code>sources.txt</code>: a list of sources that are used by the tools to discover the required files.</li>
+<li><code>primmap.json</code>: contains information about the accelerator that is used by the tools. The <code>accelerator-type-uuid</code> is used by the host application for discovery.</li>
+<li><code>primmap.mmio.yml</code>: a custom <a href="https://github.com/abs-tudelft/vhdmmio"><code>vhdmmio</code></a> input file. Needed because currently Fletchgen does not support generating compatible MMIO files for this platform.</li>
+<li><code>primmap.ext.yml</code>: a set of custom signals that are added to the design by fletchgen.</li>
+</ul>
+<p>The first step is to use <a href="https://github.com/abs-tudelft/fletcher"><code>fletchgen</code></a> to generate the required hardware to wrap the sum kernel.</p>
+<p>Start by starting a new container from the root of the example.</p>
+<pre><code>cd fletcher-opae/examples/primmap/
+docker run -it --rm -v `pwd`:/src ias:1.2.1
+</code></pre>
+<p>Generate an input recordbatch file and the output schema using the provided <code>generate.py</code> Python script.</p>
+<pre><code>python3 generate.py
+</code></pre>
+<p>This script generates the <code>in.rb</code> and <code>out.as</code> files.</p>
+<p>Then run Fletchgen on the mounted source folder.</p>
+<pre><code>cd /src/hw
+fletchgen -n primmap -r in.rb -i out.as -l vhdl --mmio64 --mmio-offset 64 -e primmap.ext.yml --axi
+</code></pre>
+<p>Because Fletchgen currently does not support generating MMIO files for this platform run <code>vhdmmio</code> on the provided MMIO yaml file.</p>
+<pre><code>vhdmmio -V vhdl -P vhdl primmap.mmio.yml
+</code></pre>
+<p>You can now <code>exit</code> the container and inspect the generated files.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
+                            <a rel="prev" href="primmap-example.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
 
                         
-                            <a rel="next" href="setup.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="primmap-use.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -190,9 +224,13 @@
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
+                    <a rel="prev" href="primmap-example.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
 
                 
-                    <a rel="next" href="setup.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="primmap-use.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 
