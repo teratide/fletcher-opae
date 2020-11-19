@@ -21,7 +21,7 @@ RUN mkdir -p /installer && \
     chmod +x ModelSimProSetup-19.2.0.57-linux.run && \
     ./ModelSimProSetup-19.2.0.57-linux.run --mode unattended --installdir /opt/intelFPGA_pro/quartus_19.2.0b57/ --accept_eula 1 && \
     rm -rf /installer && \
-    yum install -y glibc-devel.i686 libX11.i686 libXext.i686 libXft.i686 libgcc.i686 && \
+    yum install -y glibc-devel.i686 libX11.i686 libXext.i686 libXft.i686 libgcc libgcc.i686 && \
     sed -ci 's/linux_rh60/linux/g' /opt/intelFPGA_pro/quartus_19.2.0b57/modelsim_ase/bin/vsim
 
 ENV MTI_HOME /opt/intelFPGA_pro/quartus_19.2.0b57/modelsim_ase
@@ -64,7 +64,8 @@ ENV FPGA_BBB_CCI_SRC /intel-fpga-bbb
 RUN curl -L https://github.com/oneapi-src/oneTBB/releases/download/v2020.3/tbb-2020.3-lin.tgz | tar xz -C /usr --strip-components=1
 
 # Fletcher runtime
-ARG FLETCHER_REF=0.0.12
+# ARG FLETCHER_REF=0.0.12
+ARG FLETCHER_REF=develop
 ARG ARROW_VERSION=1.0.1
 RUN mkdir -p /fletcher && \
     yum install -y https://apache.bintray.com/arrow/centos/$(cut -d: -f5 /etc/system-release-cpe)/apache-arrow-release-latest.rpm && \
@@ -91,7 +92,8 @@ RUN mkdir -p /fletcher-opae && \
     rm -rf /fletcher-opae
 
 # Install vhdmmio
+ARG FLETCHER_VERSION=0.0.13
 RUN python3 -m pip install -U pip && \
-    python3 -m pip install vhdmmio pyfletchgen pyarrow==${ARROW_VERSION}
+    python3 -m pip install vhdmmio vhdeps pyfletchgen==${FLETCHER_VERSION} pyarrow==${ARROW_VERSION}
 
 WORKDIR /src
