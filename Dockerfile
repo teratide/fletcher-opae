@@ -83,7 +83,7 @@ RUN git clone --recursive https://github.com/abs-tudelft/fletcher /fletcher && c
 ENV FLETCHER_HARDWARE_DIR=/fletcher/hardware
 
 # Fletcher plaform support for OPAE
-ARG FLETCHER_OPAE_REF=bbb936545bddc9d8c7f446db6b542647a2265219
+ARG FLETCHER_OPAE_REF=fa074b713ae5263a270adf0a404568971986554e
 RUN mkdir -p /fletcher-opae && \
     curl -L https://github.com/abs-tudelft/fletcher-opae/archive/${FLETCHER_OPAE_REF}.tar.gz | tar xz -C /fletcher-opae --strip-components=1 && \
     cd /fletcher-opae && \
