@@ -1,0 +1,42 @@
+FROM centos:7.9.2009
+
+RUN yum install -y epel-release
+
+# Open Programmable Acceleration Engine
+ARG OPAE_REF=release/2.0.0
+RUN mkdir -p /opae-sdk/build && \
+  yum install -y git cmake3 make gcc gcc-c++ json-c-devel libuuid-devel hwloc-devel python-devel glibc-devel && \
+  curl -L https://github.com/OPAE/opae-sdk/archive/${OPAE_REF}.tar.gz | tar xz -C /opae-sdk --strip-components=1 && \
+  cd /opae-sdk/build && \
+  cmake3 -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX=/usr .. && \
+  make -j && \
+  make install && \
+  rm -rf /opae-sdk/build
+
+# Fletcher runtime
+ARG FLETCHER_REF=0.0.14
+ARG ARROW_VERSION=1.0.1
+RUN mkdir -p /fletcher && \
+  yum install -y https://apache.bintray.com/arrow/centos/$(cut -d: -f5 /etc/system-release-cpe)/apache-arrow-release-latest.rpm && \
+  yum install -y arrow-devel-${ARROW_VERSION}-1.el7 && \
+  curl -L https://github.com/abs-tudelft/fletcher/archive/${FLETCHER_REF}.tar.gz | tar xz -C /fletcher --strip-components=1 && \
+  cd /fletcher && \
+  cmake3 -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX=/usr . && \
+  make -j && \
+  make install && \
+  rm -rf /fletcher
+
+# Fletcher plaform support for OPAE
+ARG FLETCHER_OPAE_REF=13fa0a4871dc75cb52cfb126f1373b714720467c
+RUN mkdir -p /fletcher-opae && \
+  curl -L https://github.com/abs-tudelft/fletcher-opae/archive/${FLETCHER_OPAE_REF}.tar.gz | tar xz -C /fletcher-opae --strip-components=1 && \
+  cd /fletcher-opae && \
+  cmake3 -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX=/usr . && \
+  make -j && \
+  make install && \
+  rm -rf /fletcher-opae
+
+WORKDIR /src
