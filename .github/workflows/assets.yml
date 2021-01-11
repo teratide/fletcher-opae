@@ -1,0 +1,132 @@
+name: Assets
+
+on:
+  release:
+    types:
+    - created
+  pull_request:
+
+env:
+  CMAKE_VERSION: '3.19.2'
+  FLETCHER_VERSION: '0.0.16'
+  OPAE_VERSION: '2.0.0-1'
+
+jobs:
+  archive:
+    name: Linux
+    runs-on: ubuntu-latest
+    container: centos:7
+    strategy:
+      matrix:
+        ase:
+        - ON
+        - OFF
+    steps:
+    - name: Install dependencies
+      run: |
+        yum install -y epel-release
+        yum install -y curl make gcc gcc-c++ rpm-build git
+        yum install -y json-c-devel libuuid-devel
+    - name: Install CMake
+      run: curl -L https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cmake-$CMAKE_VERSION-Linux-x86_64.tar.gz | tar xz --strip-components=1 -C /usr
+    - uses: actions/checkout@v2
+    - name: Configure
+      run: cmake . -DCMAKE_BUILD_TYPE=Release -DBUILD_FLETCHER_OPAE-ASE=${{ matrix.ase }}
+    - name: Package
+      run: make -j package
+    - id: tarball
+      run: echo "##[set-output name=name;]$(ls fletch*.tar.gz)"
+    - name: Install
+      run: tar xvfz ./${{ steps.tarball.outputs.name }} -C /usr
+    - name: Upload tarball
+      uses: actions/upload-release-asset@v1
+      if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ${{ steps.tarball.outputs.name }}
+        asset_name: ${{ steps.tarball.outputs.name }}
+        asset_content_type: application/octet-stream
+
+  centos:
+    name: CentOS
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version:
+        - 7
+        - 8
+        ase:
+        - ON
+        - OFF
+    container: centos:${{ matrix.version }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        yum install -y epel-release
+        yum install -y curl make rpm-build gcc gcc-c++ git libuuid-devel
+    - name: Install dependencies
+      if: ${{ matrix.version == '7' }}
+      run: yum install -y json-c-devel
+    - name: Install dependencies
+      if: ${{ matrix.version == '8' }}
+      run: |
+        dnf -y install dnf-plugins-core
+        dnf config-manager --set-enabled powertools
+        dnf -y install json-c-devel
+    - name: Install CMake
+      run: curl -L https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cmake-$CMAKE_VERSION-Linux-x86_64.tar.gz | tar xz --strip-components=1 -C /usr
+    - name: Configure
+      run: cmake . -DCMAKE_BUILD_TYPE=Release -DBUILD_FLETCHER_OPAE-ASE=${{ matrix.ase }}
+    - name: Package
+      run: make -j package
+    - id: rpm
+      run: echo "##[set-output name=name;]$(ls fletch*.rpm)"
+    # - name: Install
+    #   run: yum localinstall -y ./${{ steps.rpm.outputs.name }}
+    - name: Upload rpm
+      uses: actions/upload-release-asset@v1
+      if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ${{ steps.rpm.outputs.name }}
+        asset_name: ${{ steps.rpm.outputs.name }}
+        asset_content_type: application/octet-stream
+  
+  ubuntu:
+    name: Ubuntu
+    strategy:
+      matrix:
+        version:
+        - 18.04
+        - 20.04
+        ase:
+        - ON
+        - OFF
+    runs-on: ubuntu-${{ matrix.version }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: sudo apt-get install -y uuid-dev libjson-c-dev
+    - name: Configure
+      run: cmake . -DCMAKE_BUILD_TYPE=Release -DBUILD_FLETCHER_OPAE-ASE=${{ matrix.ase }}
+    - name: Package
+      run: make -j package
+    - id: deb
+      run: echo "##[set-output name=name;]$(ls fletch*.deb)"
+    # - name: Install
+    #   run: sudo apt-get install -y ./${{ steps.deb.outputs.name }}
+    - name: Upload deb
+      uses: actions/upload-release-asset@v1
+      if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ${{ steps.deb.outputs.name }}
+        asset_name: ${{ steps.deb.outputs.name }}
+        asset_content_type: application/octet-stream
