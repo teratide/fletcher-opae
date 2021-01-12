@@ -30,7 +30,8 @@ entity OpaeAxiTop is
     M_AXI_RUSER_WIDTH : natural := 8;
     S_AXI_ADDR_WIDTH  : natural := 18;
     S_AXI_DATA_WIDTH  : natural := 64;
-    S_AXI_ID_WIDTH    : natural := 1;
+    S_AXI_RID_WIDTH   : natural := 10;
+    S_AXI_WID_WIDTH   : natural := 1;
     S_AXI_WUSER_WIDTH : natural := 1;
     S_AXI_RUSER_WIDTH : natural := 1
   );
@@ -103,7 +104,7 @@ entity OpaeAxiTop is
     -- Write address channel.
     s_axi_awvalid     : in  std_logic;
     s_axi_awready     : out std_logic;
-    s_axi_awid        : in  std_logic_vector(S_AXI_ID_WIDTH-1 downto 0);
+    s_axi_awid        : in  std_logic_vector(S_AXI_WID_WIDTH-1 downto 0);
     s_axi_awaddr      : in  std_logic_vector(S_AXI_ADDR_WIDTH-1 downto 0);
     s_axi_awsize      : in  std_logic_vector(2 downto 0);
     s_axi_awprot      : in  std_logic_vector(2 downto 0);
@@ -119,14 +120,14 @@ entity OpaeAxiTop is
     -- Write response channel.
     s_axi_bvalid      : out std_logic;
     s_axi_bready      : in  std_logic;
-    s_axi_bid         : out std_logic_vector(S_AXI_ID_WIDTH-1 downto 0);
+    s_axi_bid         : out std_logic_vector(S_AXI_WID_WIDTH-1 downto 0);
     s_axi_bresp       : out std_logic_vector(1 downto 0);
     s_axi_buser       : out std_logic_vector(S_AXI_WUSER_WIDTH-1 downto 0);
 
     -- Read address channel.
     s_axi_arvalid     : in  std_logic;
     s_axi_arready     : out std_logic;
-    s_axi_arid        : in  std_logic_vector(S_AXI_ID_WIDTH-1 downto 0);
+    s_axi_arid        : in  std_logic_vector(S_AXI_RID_WIDTH-1 downto 0);
     s_axi_araddr      : in  std_logic_vector(S_AXI_ADDR_WIDTH-1 downto 0);
     s_axi_arsize      : in  std_logic_vector(2 downto 0);
     s_axi_arprot      : in  std_logic_vector(2 downto 0);
@@ -135,8 +136,8 @@ entity OpaeAxiTop is
     -- Read data/response channel.
     s_axi_rvalid      : out std_logic;
     s_axi_rready      : in  std_logic;
-    s_axi_rid         : out std_logic_vector(S_AXI_ID_WIDTH-1 downto 0);
-    s_axi_rdata       : out std_logic_vector(S_AXI_DATA_WIDTH downto 0);
+    s_axi_rid         : out std_logic_vector(S_AXI_RID_WIDTH-1 downto 0);
+    s_axi_rdata       : out std_logic_vector(S_AXI_DATA_WIDTH-1 downto 0);
     s_axi_rresp       : out std_logic_vector(1 downto 0);
     s_axi_ruser       : out std_logic_vector(S_AXI_RUSER_WIDTH-1 downto 0)
 
@@ -223,16 +224,16 @@ architecture Behavorial of OpaeAxiTop is
   -- MMIO bus ID buffer signals.
   signal buf_awvalid  : std_logic;
   signal buf_awready  : std_logic;
-  signal buf_awmeta   : std_logic_vector(S_AXI_ID_WIDTH+S_AXI_WUSER_WIDTH-1 downto 0);
+  signal buf_awmeta   : std_logic_vector(S_AXI_WID_WIDTH+S_AXI_WUSER_WIDTH-1 downto 0);
   signal buf_bvalid   : std_logic;
   signal buf_bready   : std_logic;
-  signal buf_bmeta    : std_logic_vector(S_AXI_ID_WIDTH+S_AXI_WUSER_WIDTH-1 downto 0);
+  signal buf_bmeta    : std_logic_vector(S_AXI_WID_WIDTH+S_AXI_WUSER_WIDTH-1 downto 0);
   signal buf_arvalid  : std_logic;
   signal buf_arready  : std_logic;
-  signal buf_armeta   : std_logic_vector(S_AXI_ID_WIDTH+S_AXI_RUSER_WIDTH-1 downto 0);
+  signal buf_armeta   : std_logic_vector(S_AXI_RID_WIDTH+S_AXI_RUSER_WIDTH-1 downto 0);
   signal buf_rvalid   : std_logic;
   signal buf_rready   : std_logic;
-  signal buf_rmeta    : std_logic_vector(S_AXI_ID_WIDTH+S_AXI_RUSER_WIDTH-1 downto 0);
+  signal buf_rmeta    : std_logic_vector(S_AXI_RID_WIDTH+S_AXI_RUSER_WIDTH-1 downto 0);
 
 begin
 
@@ -460,7 +461,7 @@ begin
   buf_w_inst: StreamBuffer
     generic map (
       MIN_DEPTH     => 4,
-      DATA_WIDTH    => S_AXI_ID_WIDTH + S_AXI_WUSER_WIDTH
+      DATA_WIDTH    => S_AXI_WID_WIDTH + S_AXI_WUSER_WIDTH
     )
     port map (
       clk           => clk,
@@ -508,7 +509,7 @@ begin
   buf_r_inst: StreamBuffer
     generic map (
       MIN_DEPTH     => 4,
-      DATA_WIDTH    => S_AXI_ID_WIDTH + S_AXI_RUSER_WIDTH
+      DATA_WIDTH    => S_AXI_RID_WIDTH + S_AXI_RUSER_WIDTH
     )
     port map (
       clk           => clk,
@@ -545,16 +546,16 @@ begin
   fls_wdata         <= s_axi_wdata;
   fls_wstrb         <= s_axi_wstrb;
 
-  s_axi_bid         <= buf_bmeta(S_AXI_ID_WIDTH-1 downto 0);
+  s_axi_bid         <= buf_bmeta(S_AXI_WID_WIDTH-1 downto 0);
   s_axi_bresp       <= fls_bresp;
-  s_axi_buser       <= buf_bmeta(S_AXI_WUSER_WIDTH+S_AXI_ID_WIDTH-1 downto S_AXI_ID_WIDTH);
+  s_axi_buser       <= buf_bmeta(S_AXI_WUSER_WIDTH+S_AXI_WID_WIDTH-1 downto S_AXI_WID_WIDTH);
 
   fls_araddr        <= std_logic_vector(resize(unsigned(s_axi_araddr), 32));
   buf_armeta        <= s_axi_aruser & s_axi_arid;
 
-  s_axi_rid         <= buf_rmeta(S_AXI_ID_WIDTH-1 downto 0);
+  s_axi_rid         <= buf_rmeta(S_AXI_RID_WIDTH-1 downto 0);
   s_axi_rdata       <= fls_rdata;
   s_axi_rresp       <= fls_rresp;
-  s_axi_ruser       <= buf_rmeta(S_AXI_RUSER_WIDTH+S_AXI_ID_WIDTH-1 downto S_AXI_ID_WIDTH);
+  s_axi_ruser       <= buf_rmeta(S_AXI_RUSER_WIDTH+S_AXI_RID_WIDTH-1 downto S_AXI_RID_WIDTH);
 
 end architecture;
