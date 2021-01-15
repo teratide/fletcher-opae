@@ -198,6 +198,8 @@ fstatus_t platformPrepareHostBuffer(const uint8_t *host_source, da_t *device_des
     }
     else
     {
+        fprintf(stderr, "Warning: make sure your output buffers are page aligned.\n");
+
         // Allocate a new buffer
         result = fpgaPrepareBuffer(state.handle, size, (void **)&buffer_address, &wsid, 0);
         OPAE_CHECK_RESULT(result, "preparing shared memory buffer");

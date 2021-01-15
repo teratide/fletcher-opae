@@ -1,0 +1,4 @@
+[submodule "examples/battery_status/hw/vhdl/tydi-json"]
+	path = examples/battery_status/hw/vhdl/tydi-json
+	url = git@github.com:teratide/tydi-json.git
+	branch = master
