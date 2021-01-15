@@ -10,3 +10,7 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 build
+
+examples/trip_report/hw/in.srec
+
+examples/trip_report/hw/sim.sh
