@@ -82,9 +82,9 @@ RUN git clone --recursive --single-branch -b ${FLETCHER_VERSION} https://github.
 ENV FLETCHER_HARDWARE_DIR=/fletcher/hardware
 
 # Fletcher plaform support for OPAE
-ARG FLETCHER_OPAE_REF=77521f202855f46f0b884511e320390b0607b04e
+ARG FLETCHER_OPAE_VERSION=0.1.1
 RUN mkdir -p /fletcher-opae && \
-    curl -L https://github.com/teratide/fletcher-opae/archive/${FLETCHER_OPAE_REF}.tar.gz | tar xz -C /fletcher-opae --strip-components=1 && \
+    curl -L https://github.com/teratide/fletcher-opae/archive/${FLETCHER_OPAE_VERSION}.tar.gz | tar xz -C /fletcher-opae --strip-components=1 && \
     cd /fletcher-opae && \
     cmake3 -DCMAKE_BUILD_TYPE=Release -DBUILD_FLETCHER_OPAE-ASE=ON -DCMAKE_INSTALL_PREFIX=/usr . && \
     make -j && \
