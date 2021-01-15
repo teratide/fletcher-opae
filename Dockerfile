@@ -29,7 +29,7 @@ ENV QUESTA_HOME "${MTI_HOME}"
 ENV PATH "${MTI_HOME}/bin:${PATH}"
 
 # Platform Interface Manager
-ARG OFS_REF=d2249059be0f10791662e6244dcd8feed00bd50e
+ARG OFS_REF=349409852326f716ca196755357e45acd6407c78
 RUN mkdir -p /ofs-platform-afu-bbb && \
     curl -L https://github.com/OPAE/ofs-platform-afu-bbb/archive/${OFS_REF}.tar.gz | tar xz -C /ofs-platform-afu-bbb --strip-components=1 && \
     cd /ofs-platform-afu-bbb/ && \
@@ -37,19 +37,20 @@ RUN mkdir -p /ofs-platform-afu-bbb && \
 
 # Open Programmable Acceleration Engine
 ARG OPAE_REF=release/2.0.0
+ARG OPAE_SIM_REF=a51f807bd336bd53da23f383f5732c7fc311f5a9
 RUN mkdir -p /opae-sdk/build && \
     yum install -y git cmake3 make gcc gcc-c++ json-c-devel libuuid-devel hwloc-devel python-devel glibc-devel && \
     curl -L https://github.com/OPAE/opae-sdk/archive/${OPAE_REF}.tar.gz | tar xz -C /opae-sdk --strip-components=1 && \
     cd /opae-sdk/build && \
     cmake3 -DCMAKE_BUILD_TYPE=Release \
-    -DBUILD_ASE=On -DOPAE_BUILD_SIM=On -DOPAE_SIM_TAG=c5b24f7b31a656d9e85541ca9ba9e1841ac4ede1 \
+    -DBUILD_ASE=On -DOPAE_BUILD_SIM=On -DOPAE_SIM_TAG=${OPAE_SIM_REF} \
     -DCMAKE_INSTALL_PREFIX=/usr .. && \
     make -j && \
     make install && \
     rm -rf /opae-sdk/build
 
 # Intel FPGA Basic Building Blocks
-ARG BBB_REF=579ce26b433c3b81de4fa1a5e3e9985f48bc5dde
+ARG BBB_REF=3d7d2017a98f740bd73a9a2ad020efe16f25500f
 RUN mkdir -p /intel-fpga-bbb/build && \
     curl -L https://github.com/OPAE/intel-fpga-bbb/archive/${BBB_REF}.tar.gz | tar xz -C /intel-fpga-bbb --strip-components=1 && \
     cd /intel-fpga-bbb/build && \
@@ -64,13 +65,12 @@ ENV FPGA_BBB_CCI_SRC /intel-fpga-bbb
 RUN curl -L https://github.com/oneapi-src/oneTBB/releases/download/v2020.3/tbb-2020.3-lin.tgz | tar xz -C /usr --strip-components=1
 
 # Fletcher runtime
-# ARG FLETCHER_REF=0.0.12
-ARG FLETCHER_REF=develop
+ARG FLETCHER_VERSION=0.0.16
 ARG ARROW_VERSION=1.0.1
 RUN mkdir -p /fletcher && \
     yum install -y https://apache.bintray.com/arrow/centos/$(cut -d: -f5 /etc/system-release-cpe)/apache-arrow-release-latest.rpm && \
     yum install -y arrow-devel-${ARROW_VERSION}-1.el7 && \
-    curl -L https://github.com/abs-tudelft/fletcher/archive/${FLETCHER_REF}.tar.gz | tar xz -C /fletcher --strip-components=1 && \
+    curl -L https://github.com/abs-tudelft/fletcher/archive/${FLETCHER_VERSION}.tar.gz | tar xz -C /fletcher --strip-components=1 && \
     cd /fletcher && \
     cmake3 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr . && \
     make -j && \
@@ -78,13 +78,13 @@ RUN mkdir -p /fletcher && \
     rm -rf /fletcher
 
 # Fletcher hardware libs
-RUN git clone --recursive --single-branch -b ${FLETCHER_REF} https://github.com/abs-tudelft/fletcher /fletcher
+RUN git clone --recursive --single-branch -b ${FLETCHER_VERSION} https://github.com/abs-tudelft/fletcher /fletcher
 ENV FLETCHER_HARDWARE_DIR=/fletcher/hardware
 
 # Fletcher plaform support for OPAE
-ARG FLETCHER_OPAE_REF=13fa0a4871dc75cb52cfb126f1373b714720467c
+ARG FLETCHER_OPAE_VERSION=0.1.0
 RUN mkdir -p /fletcher-opae && \
-    curl -L https://github.com/abs-tudelft/fletcher-opae/archive/${FLETCHER_OPAE_REF}.tar.gz | tar xz -C /fletcher-opae --strip-components=1 && \
+    curl -L https://github.com/teratide/fletcher-opae/archive/${FLETCHER_OPAE_VERSION}.tar.gz | tar xz -C /fletcher-opae --strip-components=1 && \
     cd /fletcher-opae && \
     cmake3 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr . && \
     make -j && \
@@ -92,7 +92,6 @@ RUN mkdir -p /fletcher-opae && \
     rm -rf /fletcher-opae
 
 # Install vhdmmio
-ARG FLETCHER_VERSION=0.0.13
 RUN python3 -m pip install -U pip && \
     python3 -m pip install vhdmmio vhdeps pyfletchgen==${FLETCHER_VERSION} pyarrow==${ARROW_VERSION}
 
