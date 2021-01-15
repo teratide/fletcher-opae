@@ -9,6 +9,8 @@ platform_state state;
 platform_buffer platform_buffer_map[FLETCHER_PLATFORM_BUFFER_MAP_CAPACITY];
 size_t platform_buffer_map_size = 0;
 
+da_t device_buffer_ptr = 0x0;
+
 fstatus_t platformGetName(char *name, size_t size)
 {
     size_t len = strlen(FLETCHER_PLATFORM_NAME);
@@ -203,11 +205,7 @@ fstatus_t platformPrepareHostBuffer(const uint8_t *host_source, da_t *device_des
         OPAE_CHECK_RESULT(result, "preparing shared memory buffer");
 
         // Copy contents to new buffer
-        int i;
-        for (i = 0; i < size; i++)
-        {
-            buffer_address[i] = host_source[i];
-        }
+        memcpy(buffer_address, host_source, size);
 
         *alloced = size;
     }
