@@ -167,6 +167,7 @@ fstatus_t platformPrepareHostBuffer(const uint8_t *host_source,
                                     da_t *device_destination,
                                     int64_t size,
                                     int *alloced) {
+  // Check if there is enough space left in address map
   if (platform_buffer_map_size == FLETCHER_PLATFORM_BUFFER_MAP_CAPACITY - 1) {
     fprintf(stderr,
             "Error: platform buffer map capacity reached. "
@@ -174,33 +175,99 @@ fstatus_t platformPrepareHostBuffer(const uint8_t *host_source,
     return FLETCHER_STATUS_ERROR;
   }
 
-  fpga_result result = FPGA_OK;
+  // Get system page size.
+  size_t page_size = sysconf(_SC_PAGESIZE);
 
+  fpga_result result = FPGA_OK;
   uint64_t wsid;
   volatile uint64_t *buffer_address;
 
-  // Attempt to re-use the provided buffer. (Requires page-aligned buffer)
-  result = fpgaPrepareBuffer(state.handle,
-                             size,
-                             (void **) &host_source,
-                             &wsid,
-                             FPGA_BUF_PREALLOCATED);
+  int copy_contents = 0;
 
-  if (result == FPGA_OK) {
+  // OPAE requires buffers to be of a size that is a non-zero multiple of the page size.
+  // OPAE seems to also require buffers to be page aligned.
+  int is_properly_sized = size % page_size == 0;
+  int is_page_aligned = ((uint64_t) host_source) % page_size == 0;
+
+  // We need to make sure this is both true before calling fpgaPrepareBuffer.
+  if (is_properly_sized && is_page_aligned) {
+    // We can re-use the provided buffer,
+    // since its size is a non-zero multiple of the page size.
+    result = fpgaPrepareBuffer(state.handle,
+                               size,
+                               (void **) &host_source,
+                               &wsid,
+                               FPGA_BUF_PREALLOCATED);
     buffer_address = (uint64_t *) host_source;
-
+    // Nothing was allocated.
     *alloced = 0;
   } else {
-    fprintf(stderr, "Warning: make sure your output buffers are page aligned.\n");
+    size_t new_size = size;
+    // Print the respective warning.
+    if (!is_properly_sized) {
+      fprintf(stderr,
+              "WARNING: Host buffer size (%d) is not non-zero multiple of "
+              "page size (%d) as required by Intel OPAE. "
+              "Circumventing by copy to buffer of size (%d)",
+              size,
+              page_size,
+              new_size);
+      // Calculate new buffer size by rounding up to nearest multiple of page size.
+      new_size = (size / page_size + (size % page_size ? 1 : 0)) * page_size;
+    }
+    if (!is_page_aligned) {
+      fprintf(stderr,
+              "WARNING: Host buffer address (0x%016X) is not page-aligned "
+              "(page size = %d). Circumventing by copy to page-aligned buffer.",
+              host_source,
+              page_size);
+    }
+    // Circumvent the restriction by allocating a new buffer of appropriate size
+    // and alignment.
 
-    // Allocate a new buffer
-    result = fpgaPrepareBuffer(state.handle, size, (void **) &buffer_address, &wsid, 0);
-    OPAE_CHECK_RESULT(result, "preparing shared memory buffer");
+    // Allocate a new FPGA-accessible buffer, i.e. without FPGA_BUF_PREALLOCATED.
+    result = fpgaPrepareBuffer(state.handle,
+                               new_size,
+                               (void **) &buffer_address,
+                               &wsid,
+                               0);
+    // This buffer was newly allocated, and the caller should free it.
+    *alloced = new_size;
+    // After checking the result, copy the contents of the original host buffer into the
+    // FPGA-accessible host buffer.
+    copy_contents = 1;
+  }
 
+  // Check the result of the fpgaPrepareBuffer call.
+  switch (result) {
+    case FPGA_OK: {
+      break;
+    }
+    case FPGA_NO_MEMORY:
+      fprintf(stderr,
+              "OPAE fpgaPrepareBuffer FPGA_NO_MEMORY: "
+              "the requested memory could not be allocated.\n");
+      return FLETCHER_STATUS_ERROR;
+    case FPGA_INVALID_PARAM:
+      fprintf(stderr,
+              "OPAE fpgaPrepareBuffer FPGA_INVALID_PARAM: "
+              "invalid parameters were provided, or the parameter combination is not "
+              "valid.\n");
+      return FLETCHER_STATUS_ERROR;
+    case FPGA_EXCEPTION:
+      fprintf(stderr,
+              "OPAE fpgaPrepareBuffer FPGA_EXCEPTION: "
+              "an internal exception occurred while trying to access the handle.\n");
+      return FLETCHER_STATUS_ERROR;
+    default:
+      fprintf(stderr,
+              "OPAE fpgaPrepareBuffer returned unknown error code.");
+      return FLETCHER_STATUS_ERROR;
+  }
+
+  if (copy_contents) {
     // Copy contents to new buffer
     memcpy(buffer_address, host_source, size);
-
-    *alloced = size;
   }
 
   result = fpgaGetIOAddress(state.handle, wsid, device_destination);
