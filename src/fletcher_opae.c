@@ -176,7 +176,7 @@ fstatus_t platformPrepareHostBuffer(const uint8_t *host_source,
   }
 
   // Get system page size.
-  size_t page_size = sysconf(_SC_PAGESIZE);
+  size_t page_size = (size_t) sysconf(_SC_PAGE_SIZE);
 
   fpga_result result = FPGA_OK;
   uint64_t wsid;
@@ -206,9 +206,8 @@ fstatus_t platformPrepareHostBuffer(const uint8_t *host_source,
     // Print the respective warning.
     if (!is_properly_sized) {
       fprintf(stderr,
-              "WARNING: Host buffer size (%d) is not non-zero multiple of "
-              "page size (%d) as required by Intel OPAE. "
-              "Circumventing by copy to buffer of size (%d)",
+              "WARNING: Host buffer size (%d) is not non-zero multiple of page size (%d) "
+              "as required by Intel OPAE. Circumventing by copy to buffer of size (%d)\n",
               size,
               page_size,
               new_size);
@@ -217,10 +216,11 @@ fstatus_t platformPrepareHostBuffer(const uint8_t *host_source,
     }
     if (!is_page_aligned) {
       fprintf(stderr,
-              "WARNING: Host buffer address (0x%016X) is not page-aligned "
-              "(page size = %d). Circumventing by copy to page-aligned buffer.",
+              "WARNING: Host buffer address (%p) is not page-aligned "
+              "(page size = %d). Circumventing by copy to page-aligned buffer.\n",
               host_source,
-              page_size);
+              page_size,
+              new_size);
     }
     // Circumvent the restriction by allocating a new buffer of appropriate size
     // and alignment.
@@ -252,7 +252,11 @@ fstatus_t platformPrepareHostBuffer(const uint8_t *host_source,
       fprintf(stderr,
               "OPAE fpgaPrepareBuffer FPGA_INVALID_PARAM: "
               "invalid parameters were provided, or the parameter combination is not "
-              "valid.\n");
+              "valid. \n");
+      fprintf(stderr, "  Page size: %d\n", page_size);
+      fprintf(stderr, "  Address: %p\n", host_source);
+      fprintf(stderr, "  Size: %ul\n", size);
+      fprintf(stderr, "  Platform buffer map size: %d\n", platform_buffer_map_size);
       return FLETCHER_STATUS_ERROR;
     case FPGA_EXCEPTION:
       fprintf(stderr,
@@ -261,7 +265,7 @@ fstatus_t platformPrepareHostBuffer(const uint8_t *host_source,
       return FLETCHER_STATUS_ERROR;
     default:
       fprintf(stderr,
-              "OPAE fpgaPrepareBuffer returned unknown error code.");
+              "OPAE fpgaPrepareBuffer returned unknown error code.\n");
       return FLETCHER_STATUS_ERROR;
   }
 
