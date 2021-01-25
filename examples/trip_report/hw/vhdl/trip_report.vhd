@@ -545,7 +545,6 @@ architecture Implementation of trip_report is
   signal unl_ready                        : std_logic;
 
 
-
   type state_t is (
     STATE_IDLE,         -- idle
     STATE_REQ_READ,     -- send read request
@@ -595,7 +594,6 @@ begin
   end process;
 
   result <= std_logic_vector(record_counter);
-
 
   -- write request defaults
   output_timezone_cmd_firstIdx                  <= output_firstidx;
@@ -980,7 +978,7 @@ begin
 
     BRAKING_INT_WIDTH                                => BRAKING_INT_WIDTH,
     BRAKING_INT_P_PIPELINE_STAGES                    => 4,
-    BRAKING_BUFFER_D                                 => 6,
+    BRAKING_BUFFER_D                                 => 13,
 
     ACCEL_INT_WIDTH                                  => ACCEL_INT_WIDTH,
     ACCEL_INT_P_PIPELINE_STAGES                      => 4,
@@ -1140,6 +1138,7 @@ begin
     timestamp_data                              => timestamp_data, 
     timestamp_last                              => timestamp_last, 
     timestamp_strb                              => timestamp_strb
+
   );
 
   -- Some interfacing
