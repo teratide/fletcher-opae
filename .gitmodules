@@ -5,3 +5,6 @@
 [submodule "examples/trip_report/hw/vhdl/tydi-json"]
 	path = examples/trip_report/hw/vhdl/tydi-json
 	url = git@github.com:teratide/tydi-json.git
+[submodule "examples/trip_report_n/hw/vhdl/tydi-json"]
+	path = examples/trip_report_n/hw/vhdl/tydi-json
+	url = git@github.com:teratide/tydi-json.git
