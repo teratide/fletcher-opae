@@ -83,7 +83,7 @@ RUN git clone --recursive --single-branch -b ${FLETCHER_VERSION} https://github.
 ENV FLETCHER_HARDWARE_DIR=/fletcher/hardware
 
 # Fletcher plaform support for OPAE
-ARG FLETCHER_OPAE_VERSION=0.2.0
+ARG FLETCHER_OPAE_VERSION=0.2.1
 RUN mkdir -p /fletcher-opae && \
     curl -L https://github.com/teratide/fletcher-opae/archive/${FLETCHER_OPAE_VERSION}.tar.gz | tar xz -C /fletcher-opae --strip-components=1 && \
     cd /fletcher-opae && \
