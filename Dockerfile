@@ -36,19 +36,23 @@ RUN mkdir -p /ofs-platform-afu-bbb && \
     ./plat_if_release/update_release.sh $OPAE_PLATFORM_ROOT
 
 # Open Programmable Acceleration Engine
-ARG OPAE_REF=release/2.0.1-2
-ARG OPAE_SIM_REF=a51f807bd336bd53da23f383f5732c7fc311f5a9
-RUN mkdir -p /opae-sdk/build && \
-    yum install -y git cmake3 make gcc gcc-c++ json-c-devel libuuid-devel hwloc-devel python-devel glibc-devel && \
-    curl -L https://github.com/OPAE/opae-sdk/archive/${OPAE_REF}.tar.gz | tar xz -C /opae-sdk --strip-components=1 && \
+ARG OPAE_VERSION=2.0.1-2
+RUN yum install -y git cmake3 make gcc gcc-c++ json-c-devel libuuid-devel hwloc-devel python-devel glibc-devel && \
+    git clone --single-branch --branch release/${OPAE_VERSION} https://github.com/OPAE/opae-sdk.git /opae-sdk && \
+    mkdir -p /opae-sdk/build && \
     cd /opae-sdk/build && \
     cmake3 \
     -DCMAKE_BUILD_TYPE=Release \
     -DOPAE_BUILD_SIM=On \
-    -DCMAKE_INSTALL_PREFIX=/usr .. && \
+    -DOPAE_BUILD_LIBOPAE_PY=Off \
+    -DOPAE_BUILD_LIBOPAEVFIO=Off \
+    -DOPAE_BUILD_PLUGIN_VFIO=Off \
+    -DOPAE_BUILD_LIBOPAEUIO=Off \
+    -DOPAE_BUILD_EXTRA_TOOLS=Off \
+    -DCMAKE_INSTALL_PREFIX=/usr /opae-sdk && \
     make -j && \
     make install && \
-    rm -rf /opae-sdk/build
+    rm -rf /opae-sdk
 
 # Intel FPGA Basic Building Blocks
 ARG BBB_REF=1909c504503f0602c86089cca1aa3aad3f7929d0
