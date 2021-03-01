@@ -8,8 +8,6 @@ on:
 
 env:
   CMAKE_VERSION: '3.19.2'
-  FLETCHER_VERSION: '0.0.16'
-  OPAE_VERSION: '2.0.0-1'
 
 jobs:
   archive:

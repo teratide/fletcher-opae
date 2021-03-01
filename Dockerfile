@@ -36,21 +36,26 @@ RUN mkdir -p /ofs-platform-afu-bbb && \
     ./plat_if_release/update_release.sh $OPAE_PLATFORM_ROOT
 
 # Open Programmable Acceleration Engine
-ARG OPAE_REF=release/2.0.0
-ARG OPAE_SIM_REF=a51f807bd336bd53da23f383f5732c7fc311f5a9
-RUN mkdir -p /opae-sdk/build && \
-    yum install -y git cmake3 make gcc gcc-c++ json-c-devel libuuid-devel hwloc-devel python-devel glibc-devel && \
-    curl -L https://github.com/OPAE/opae-sdk/archive/${OPAE_REF}.tar.gz | tar xz -C /opae-sdk --strip-components=1 && \
+ARG OPAE_VERSION=2.0.1-2
+RUN yum install -y git cmake3 make gcc gcc-c++ json-c-devel libuuid-devel hwloc-devel python-devel glibc-devel && \
+    git clone --single-branch --branch release/${OPAE_VERSION} https://github.com/OPAE/opae-sdk.git /opae-sdk && \
+    mkdir -p /opae-sdk/build && \
     cd /opae-sdk/build && \
-    cmake3 -DCMAKE_BUILD_TYPE=Release \
-    -DBUILD_ASE=On -DOPAE_BUILD_SIM=On -DOPAE_SIM_TAG=${OPAE_SIM_REF} \
-    -DCMAKE_INSTALL_PREFIX=/usr .. && \
+    cmake3 \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DOPAE_BUILD_SIM=On \
+    -DOPAE_BUILD_LIBOPAE_PY=Off \
+    -DOPAE_BUILD_LIBOPAEVFIO=Off \
+    -DOPAE_BUILD_PLUGIN_VFIO=Off \
+    -DOPAE_BUILD_LIBOPAEUIO=Off \
+    -DOPAE_BUILD_EXTRA_TOOLS=Off \
+    -DCMAKE_INSTALL_PREFIX=/usr /opae-sdk && \
     make -j && \
     make install && \
-    rm -rf /opae-sdk/build
+    rm -rf /opae-sdk
 
 # Intel FPGA Basic Building Blocks
-ARG BBB_REF=3d7d2017a98f740bd73a9a2ad020efe16f25500f
+ARG BBB_REF=1909c504503f0602c86089cca1aa3aad3f7929d0
 RUN mkdir -p /intel-fpga-bbb/build && \
     curl -L https://github.com/OPAE/intel-fpga-bbb/archive/${BBB_REF}.tar.gz | tar xz -C /intel-fpga-bbb --strip-components=1 && \
     cd /intel-fpga-bbb/build && \
@@ -65,8 +70,8 @@ ENV FPGA_BBB_CCI_SRC /intel-fpga-bbb
 RUN curl -L https://github.com/oneapi-src/oneTBB/releases/download/v2020.3/tbb-2020.3-lin.tgz | tar xz -C /usr --strip-components=1
 
 # Fletcher runtime
-ARG FLETCHER_VERSION=0.0.18
-ARG ARROW_VERSION=1.0.1
+ARG FLETCHER_VERSION=0.0.19
+ARG ARROW_VERSION=3.0.0
 RUN mkdir -p /fletcher && \
     yum install -y https://apache.bintray.com/arrow/centos/$(cut -d: -f5 /etc/system-release-cpe)/apache-arrow-release-latest.rpm && \
     yum install -y arrow-devel-${ARROW_VERSION}-1.el7 && \
@@ -82,7 +87,7 @@ RUN git clone --recursive --single-branch -b ${FLETCHER_VERSION} https://github.
 ENV FLETCHER_HARDWARE_DIR=/fletcher/hardware
 
 # Fletcher plaform support for OPAE
-ARG FLETCHER_OPAE_VERSION=0.1.1
+ARG FLETCHER_OPAE_VERSION=0.2.1
 RUN mkdir -p /fletcher-opae && \
     curl -L https://github.com/teratide/fletcher-opae/archive/${FLETCHER_OPAE_VERSION}.tar.gz | tar xz -C /fletcher-opae --strip-components=1 && \
     cd /fletcher-opae && \

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 
 project(fletcher_opae
-  VERSION 0.1.1
+  VERSION 0.2.1
   DESCRIPTION "Fletcher platform support for Open Programmable Acceleration Engine"
   HOMEPAGE_URL "https://github.com/teratide/fletcher-opae"
   LANGUAGES C
@@ -21,7 +21,7 @@ FetchContent_MakeAvailable(cmake-modules)
 
 FetchContent_Declare(fletcher
   GIT_REPOSITORY  https://github.com/abs-tudelft/fletcher.git
-  GIT_TAG         0.0.16
+  GIT_TAG         0.0.19
 )
 if(NOT fletcher_POPULATED)
   FetchContent_Populate(fletcher)
@@ -30,12 +30,13 @@ endif()
 
 FetchContent_Declare(opae-c
   GIT_REPOSITORY  https://github.com/opae/opae-libs.git
-  GIT_TAG         release/2.0.0
+  GIT_TAG         release/2.0.1-2
 )
 if(NOT opae-c_POPULATED)
   FetchContent_Populate(opae-c)
   set(OPAE_BUILD_LIBOPAE_CXX OFF CACHE BOOL "")
   set(OPAE_BUILD_LIBOPAE_PY OFF CACHE BOOL "")
+  set(OPAE_BUILD_SIM ON CACHE BOOL "")
   add_subdirectory(${opae-c_SOURCE_DIR} ${opae-c_BINARY_DIR} EXCLUDE_FROM_ALL)
 endif()
 
@@ -109,16 +110,16 @@ set(CPACK_PACKAGE_RELOCATABLE ON)
 set(CPACK_DEB_COMPONENT_INSTALL ON)
 set(CPACK_DEBIAN_LIBRARY_PACKAGE_NAME "${CMAKE_PROJECT_NAME}")
 set(CPACK_DEBIAN_FILE_NAME "DEB-DEFAULT")
-set(CPACK_DEBIAN_LIBRARY_PACKAGE_DEPENDS "fletcher (= 0.0.16), opae-libs (= 2.0.0)")
-set(CPACK_DEBIAN_ASE_PACKAGE_DEPENDS "fletcher (= 0.0.16), opae-ase (= 2.0.0)")
+set(CPACK_DEBIAN_LIBRARY_PACKAGE_DEPENDS "fletcher (>= 0.0.19), opae-libs (>= 2.0.1)")
+set(CPACK_DEBIAN_ASE_PACKAGE_DEPENDS "fletcher (>= 0.0.19), opae-ase (>= 2.0.1)")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "${CPACK_PACKAGE_VENDOR}")
 
 set(CPACK_RPM_COMPONENT_INSTALL ON)
 set(CPACK_RPM_FILE_NAME "RPM-DEFAULT")
 set(CPACK_RPM_PACKAGE_DESCRIPTION "${CPACK_PACKAGE_DESCRIPTION}")
 set(CPACK_RPM_PACKAGE_LICENSE "ASL 2.0")
-set(CPACK_RPM_LIBRARY_PACKAGE_REQUIRES "fletcher = 0.0.16, opae-libs = 2.0.0")
-set(CPACK_RPM_ASE_PACKAGE_REQUIRES "fletcher = 0.0.16, opae-ase = 2.0.0")
+set(CPACK_RPM_LIBRARY_PACKAGE_REQUIRES "fletcher >= 0.0.19, opae-libs >= 2.0.1")
+set(CPACK_RPM_ASE_PACKAGE_REQUIRES "fletcher >= 0.0.19, opae-ase >= 2.0.1")
 
 set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
 set(CPACK_ARCHIVE_LIBRARY_FILE_NAME "${CMAKE_PROJECT_NAME}-${fletcher_opae_VERSION}-${CMAKE_SYSTEM_NAME}")
