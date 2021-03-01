@@ -2,3 +2,9 @@
 	path = examples/battery_status/hw/vhdl/tydi-json
 	url = git@github.com:teratide/tydi-json.git
 	branch = master
+[submodule "examples/trip_report/hw/vhdl/tydi-json"]
+	path = examples/trip_report/hw/vhdl/tydi-json
+	url = git@github.com:teratide/tydi-json.git
+[submodule "examples/trip_report_n/hw/vhdl/tydi-json"]
+	path = examples/trip_report_n/hw/vhdl/tydi-json
+	url = git@github.com:teratide/tydi-json.git
