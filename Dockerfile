@@ -37,18 +37,18 @@ RUN mkdir -p /ofs-platform-afu-bbb && \
 
 # Open Programmable Acceleration Engine
 ARG OPAE_VERSION=2.0.1-2
-RUN yum install -y git cmake3 make gcc gcc-c++ json-c-devel libuuid-devel hwloc-devel python-devel glibc-devel && \
+RUN yum install -y git cmake3 make gcc gcc-c++ json-c-devel libuuid-devel hwloc-devel python3-devel glibc-devel && \
     git clone --single-branch --branch release/${OPAE_VERSION} https://github.com/OPAE/opae-sdk.git /opae-sdk && \
     mkdir -p /opae-sdk/build && \
     cd /opae-sdk/build && \
     cmake3 \
     -DCMAKE_BUILD_TYPE=Release \
     -DOPAE_BUILD_SIM=On \
-    -DOPAE_BUILD_LIBOPAE_PY=Off \
+    -DOPAE_BUILD_LIBOPAE_PY=On \
     -DOPAE_BUILD_LIBOPAEVFIO=Off \
     -DOPAE_BUILD_PLUGIN_VFIO=Off \
     -DOPAE_BUILD_LIBOPAEUIO=Off \
-    -DOPAE_BUILD_EXTRA_TOOLS=Off \
+    -DOPAE_BUILD_EXTRA_TOOLS=On \
     -DCMAKE_INSTALL_PREFIX=/usr /opae-sdk && \
     make -j && \
     make install && \
