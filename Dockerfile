@@ -73,7 +73,7 @@ RUN curl -L https://github.com/oneapi-src/oneTBB/releases/download/v2020.3/tbb-2
 ARG FLETCHER_VERSION=0.0.19
 ARG ARROW_VERSION=3.0.0
 RUN mkdir -p /fletcher && \
-    yum install -y https://apache.bintray.com/arrow/centos/$(cut -d: -f5 /etc/system-release-cpe)/apache-arrow-release-latest.rpm && \
+    yum install -y https://apache.jfrog.io/artifactory/arrow/centos/$(cut -d: -f5 /etc/system-release-cpe)/apache-arrow-release-latest.rpm && \
     yum install -y arrow-devel-${ARROW_VERSION}-1.el7 && \
     curl -L https://github.com/abs-tudelft/fletcher/archive/${FLETCHER_VERSION}.tar.gz | tar xz -C /fletcher --strip-components=1 && \
     cd /fletcher && \
