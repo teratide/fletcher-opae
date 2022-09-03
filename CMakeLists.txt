@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 project(fletcher_opae
   VERSION 0.2.2
   DESCRIPTION "Fletcher platform support for Open Programmable Acceleration Engine"
-  HOMEPAGE_URL "https://github.com/teratide/fletcher-opae"
+  HOMEPAGE_URL "https://github.com/matthijsr/fletcher-opae"
   LANGUAGES C
 )
 
