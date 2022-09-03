@@ -70,8 +70,8 @@ ENV FPGA_BBB_CCI_SRC /intel-fpga-bbb
 RUN curl -L https://github.com/oneapi-src/oneTBB/releases/download/v2020.3/tbb-2020.3-lin.tgz | tar xz -C /usr --strip-components=1
 
 # Fletcher runtime
-ARG FLETCHER_VERSION=0.0.19
-ARG ARROW_VERSION=3.0.0
+ARG FLETCHER_VERSION=0.0.20
+ARG ARROW_VERSION=5.0.0
 RUN mkdir -p /fletcher && \
     yum install -y https://apache.jfrog.io/artifactory/arrow/centos/$(cut -d: -f5 /etc/system-release-cpe)/apache-arrow-release-latest.rpm && \
     yum install -y arrow-devel-${ARROW_VERSION}-1.el7 && \
@@ -87,7 +87,7 @@ RUN git clone --recursive --single-branch -b ${FLETCHER_VERSION} https://github.
 ENV FLETCHER_HARDWARE_DIR=/fletcher/hardware
 
 # Fletcher plaform support for OPAE
-ARG FLETCHER_OPAE_VERSION=0.2.1
+ARG FLETCHER_OPAE_VERSION=0.2.2
 RUN mkdir -p /fletcher-opae && \
     curl -L https://github.com/teratide/fletcher-opae/archive/${FLETCHER_OPAE_VERSION}.tar.gz | tar xz -C /fletcher-opae --strip-components=1 && \
     cd /fletcher-opae && \
