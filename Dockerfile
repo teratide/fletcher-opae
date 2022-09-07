@@ -29,7 +29,7 @@ ENV QUESTA_HOME "${MTI_HOME}"
 ENV PATH "${MTI_HOME}/bin:${PATH}"
 
 # Platform Interface Manager
-ARG OFS_REF=349409852326f716ca196755357e45acd6407c78
+ARG OFS_REF=2dde2f3f8ad3070694d7ca26e93056f72ca0bc41
 RUN mkdir -p /ofs-platform-afu-bbb && \
     curl -L https://github.com/OPAE/ofs-platform-afu-bbb/archive/${OFS_REF}.tar.gz | tar xz -C /ofs-platform-afu-bbb --strip-components=1 && \
     cd /ofs-platform-afu-bbb/ && \
@@ -55,7 +55,7 @@ RUN yum install -y git cmake3 make gcc gcc-c++ json-c-devel libuuid-devel hwloc-
     rm -rf /opae-sdk
 
 # Intel FPGA Basic Building Blocks
-ARG BBB_REF=1909c504503f0602c86089cca1aa3aad3f7929d0
+ARG BBB_REF=4456d1edb785f2373639671aa70ad2a6d00984a7
 RUN mkdir -p /intel-fpga-bbb/build && \
     curl -L https://github.com/OPAE/intel-fpga-bbb/archive/${BBB_REF}.tar.gz | tar xz -C /intel-fpga-bbb --strip-components=1 && \
     cd /intel-fpga-bbb/build && \
